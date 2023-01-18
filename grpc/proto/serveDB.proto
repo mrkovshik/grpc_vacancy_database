@@ -4,7 +4,8 @@ syntax = "proto3";
 message GetRequest {
     string query = 1;
 }
-
+package proto;
+option go_package = "grpc/proto";
 message GetResponse {
     string getResult = 1;
 }
