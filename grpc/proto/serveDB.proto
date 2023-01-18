@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+// Define the request and response message types
+message GetRequest {
+    string query = 1;
+}
+
+message GetResponse {
+    string getResult = 1;
+}
+
+message PutRequest {
+ 	string vacName = 1;
+    string keySkills = 2;
+	string vacDesc = 3;
+	int32 salary = 4;   
+	int32 jobCode =5;   
+}
+
+message PutResponse {
+    // The error message if there's any
+    string putResult = 1;
+}
+
+// Define the gRPC service
+service DBServer {
+    rpc Get (GetRequest) returns (GetResponse);
+    rpc Put (PutRequest) returns (PutResponse);
+}
