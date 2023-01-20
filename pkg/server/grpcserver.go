@@ -7,14 +7,14 @@ import (
 type GRPCServer struct {
 }
 
-func (s *GRPCServer) Get (ctx context.Context, req *proto.GetRequest) (*proto.GetResponse, error) {
-	return &proto.GetResponse{
-		GetResult: GetFunction(req.GetQuery()),
+func (s *GRPCServer) Read (ctx context.Context, req *proto.ReadRequest) (*proto.ReadResponse, error) {
+	return &proto.ReadResponse{
+		ReadResult: ReadFunction(req.ReadQuery()),
 		}, nil
 }
 
-func (s *GRPCServer) Put (ctx context.Context, req *proto.PutRequest) (*proto.PutResponse, error) {
+func (s *GRPCServer) Insert (ctx context.Context, req *proto.InsertRequest) (*proto.InsertResponse, error) {
 	return &proto.PutResponse{
-PutResult: PutFunction(req.GetVacName(),req.GetVacDesc(),req.GetKeySkills(),int(req.GetSalary()),int(req.GetJobCode())),
+PutResult: InsertFunction(req.GetVacName(),req.GetVacDesc(),req.GetKeySkills(),int(req.GetSalary()),int(req.GetJobCode())),
 		}, nil
 }

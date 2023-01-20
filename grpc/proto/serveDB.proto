@@ -3,30 +3,38 @@ syntax = "proto3";
 package proto;
 option go_package = "grpc/proto";
 
+
+
+
 // Define the request and response message types
-message GetRequest {
-    string query = 1;
-}
-
-message GetResponse {
-    string getResult = 1;
-}
-
-message PutRequest {
- 	string vacName = 1;
+message vacancyStruct {
+    string vacName = 1;
     string keySkills = 2;
 	string vacDesc = 3;
 	int32 salary = 4;   
 	int32 jobCode =5;   
+    string jobType =6;   
 }
 
-message PutResponse {
+message ReadRequest {
+    string query = 1;
+}
+
+message ReadResponse {
+    repeated vacancyStruct = 1;
+}
+
+message InsertRequest {
+vacancyStruct newVac =1;
+}
+
+message InsertResponse {
     // The error message if there's any
-    string putResult = 1;
+    string insertResult = 1;
 }
 
 // Define the gRPC service
 service DBServer {
-    rpc Get (GetRequest) returns (GetResponse);
-    rpc Put (PutRequest) returns (PutResponse);
+    rpc Read (ReadRequest) returns (ReadResponse);
+    rpc Insert (InsertRequest) returns (InsertResponse);
 }
