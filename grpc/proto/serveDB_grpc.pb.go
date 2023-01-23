@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DBServerClient interface {
-	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
-	Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*PutResponse, error)
+	Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadResponse, error)
+	Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error)
 }
 
 type dBServerClient struct {
@@ -34,18 +34,18 @@ func NewDBServerClient(cc grpc.ClientConnInterface) DBServerClient {
 	return &dBServerClient{cc}
 }
 
-func (c *dBServerClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
-	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/proto.DBServer/Get", in, out, opts...)
+func (c *dBServerClient) Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadResponse, error) {
+	out := new(ReadResponse)
+	err := c.cc.Invoke(ctx, "/proto.DBServer/Read", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *dBServerClient) Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*PutResponse, error) {
-	out := new(PutResponse)
-	err := c.cc.Invoke(ctx, "/proto.DBServer/Put", in, out, opts...)
+func (c *dBServerClient) Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error) {
+	out := new(InsertResponse)
+	err := c.cc.Invoke(ctx, "/proto.DBServer/Insert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,19 +56,19 @@ func (c *dBServerClient) Put(ctx context.Context, in *PutRequest, opts ...grpc.C
 // All implementations should embed UnimplementedDBServerServer
 // for forward compatibility
 type DBServerServer interface {
-	Get(context.Context, *GetRequest) (*GetResponse, error)
-	Put(context.Context, *PutRequest) (*PutResponse, error)
+	Read(context.Context, *ReadRequest) (*ReadResponse, error)
+	Insert(context.Context, *InsertRequest) (*InsertResponse, error)
 }
 
 // UnimplementedDBServerServer should be embedded to have forward compatible implementations.
 type UnimplementedDBServerServer struct {
 }
 
-func (UnimplementedDBServerServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+func (UnimplementedDBServerServer) Read(context.Context, *ReadRequest) (*ReadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
 }
-func (UnimplementedDBServerServer) Put(context.Context, *PutRequest) (*PutResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Put not implemented")
+func (UnimplementedDBServerServer) Insert(context.Context, *InsertRequest) (*InsertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Insert not implemented")
 }
 
 // UnsafeDBServerServer may be embedded to opt out of forward compatibility for this service.
@@ -82,38 +82,38 @@ func RegisterDBServerServer(s grpc.ServiceRegistrar, srv DBServerServer) {
 	s.RegisterService(&DBServer_ServiceDesc, srv)
 }
 
-func _DBServer_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
+func _DBServer_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DBServerServer).Get(ctx, in)
+		return srv.(DBServerServer).Read(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.DBServer/Get",
+		FullMethod: "/proto.DBServer/Read",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DBServerServer).Get(ctx, req.(*GetRequest))
+		return srv.(DBServerServer).Read(ctx, req.(*ReadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DBServer_Put_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutRequest)
+func _DBServer_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InsertRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DBServerServer).Put(ctx, in)
+		return srv.(DBServerServer).Insert(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.DBServer/Put",
+		FullMethod: "/proto.DBServer/Insert",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DBServerServer).Put(ctx, req.(*PutRequest))
+		return srv.(DBServerServer).Insert(ctx, req.(*InsertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -126,12 +126,12 @@ var DBServer_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*DBServerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Get",
-			Handler:    _DBServer_Get_Handler,
+			MethodName: "Read",
+			Handler:    _DBServer_Read_Handler,
 		},
 		{
-			MethodName: "Put",
-			Handler:    _DBServer_Put_Handler,
+			MethodName: "Insert",
+			Handler:    _DBServer_Insert_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

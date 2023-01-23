@@ -4,16 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	_ "github.com/lib/pq"
+	"github.com/mrkovshik/grpc_vacancy_database/grpc/proto"
 )
-
-type vacQuery struct {
-	ID int
-	vacName   string
-	keySkills string
-	vacDesc   string
-	salary    int
-	jobType string
-}
 
 type dbCred struct {
 	host     string
@@ -50,41 +43,34 @@ func connectDB() (*sql.DB, error) {
 }
 	
 
-func GetFunction (qry string) string {
-	scannedRow:=vacQuery{}
-	var result string
-	// Connect to DB
-		db,err:=connectDB()		
+func ReadFunction (qry string) [] *proto.VacancyStruct {
+	var searchQry string = " SELECT vacancies.id, vacancy_name, key_skills, salary, vacancy_desc, job_types.job_type FROM vacancies JOIN job_types ON vacancies.job_type = job_types.id WHERE vacancy_name ILIKE '%"
+
+	db,err:=connectDB()
+	if err != nil {
+		log.Fatal(err)
+		}
+	result:=[] *proto.VacancyStruct{}
+	rows, err := db.Query(searchQry+qry+"%'")
+	if err != nil {
+		log.Fatal(err)
+		}
+	defer rows.Close()
+	for i:=0; rows.Next(); i++ {
+		result=append(result, &proto.VacancyStruct{})
+		err = rows.Scan(&result[i].ID, &result[i].VacName,&result[i].KeySkills, &result[i].Salary, &result[i].VacDesc, &result[i].JobType)
 		if err != nil {
 			log.Fatal(err)
-			return "Ошибка подключения к базе данных"
-		}
-		defer db.Close()
-			rows, err := db.Query(qry)
-		if err != nil {
-			log.Fatal(err)
-			return "Ошибка чтения базы данных"
-		}
-		defer rows.Close()
-		
-		// make queries to DB
-		for i:=0; rows.Next(); i++ {
-			err = rows.Scan(&scannedRow.ID, &scannedRow.vacName,&scannedRow.keySkills, &scannedRow.salary, &scannedRow.vacDesc, &scannedRow.jobType)
-			if err != nil {
-				log.Fatal(err)
-				return "Ошибка чтения базы данных"
 			}
-			err = rows.Err()
+		err = rows.Err()
 		if err != nil {
 			log.Fatal(err)
-			return "Ошибка чтения базы данных"
-		}
-		result+=fmt.Sprintf("%v||%v||%v||%v||%v||%v\n",scannedRow.ID,scannedRow.vacName,scannedRow.keySkills,scannedRow.salary,scannedRow.vacDesc,scannedRow.jobType)
+			}
 	}
-	return  result
+	return result
 }
 
-func PutFunction (vacName string, keySkills string, vacDesc string, salary int, jobCode int ) string {
+func InsertFunction (insertRow *proto.VacancyStruct) string {
 	db,err:=connectDB()		
 	if err != nil {
 		log.Fatal(err)
@@ -96,7 +82,7 @@ func PutFunction (vacName string, keySkills string, vacDesc string, salary int, 
 		log.Fatal(err)
 		return "Ошибка добавления значений в базу"
 	}
-	_, err = stmt.Exec(vacName, keySkills, vacDesc, salary, jobCode)
+	_, err = stmt.Exec(insertRow.VacName, insertRow.KeySkills, insertRow.VacDesc, insertRow.Salary, insertRow.JobCode)
 	if err != nil {
 		log.Fatal(err)
 		return "Ошибка добавления значений в базу"

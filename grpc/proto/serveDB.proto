@@ -8,12 +8,13 @@ option go_package = "grpc/proto";
 
 // Define the request and response message types
 message vacancyStruct {
-    string vacName = 1;
-    string keySkills = 2;
-	string vacDesc = 3;
-	int32 salary = 4;   
-	int32 jobCode =5;   
-    string jobType =6;   
+    int32 ID = 1;
+    string vacName = 2;
+    string keySkills = 3;
+	string vacDesc = 4;
+	int32 salary = 5;   
+	int32 jobCode =6;   
+    string jobType =7;   
 }
 
 message ReadRequest {
@@ -21,7 +22,7 @@ message ReadRequest {
 }
 
 message ReadResponse {
-    repeated vacancyStruct = 1;
+    repeated vacancyStruct readResult = 1;
 }
 
 message InsertRequest {
