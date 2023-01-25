@@ -72,20 +72,21 @@ func InsertFunction (insertRow *proto.VacancyStruct) string {
 	db,err:=connectDB()		
 	if err != nil {
 		errMsg:=fmt.Sprintf("Ошибка подключения к базе данных: %v", err)
-		log.Fatal(err)
+	
+		
 		return errMsg
 	}
 		defer db.Close()
 	stmt, err := db.Prepare("INSERT INTO vacancies (vacancy_name,key_skills, vacancy_desc ,  salary, job_type) VALUES($1, $2,$3,$4,$5)")
 	if err != nil {
 		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
-		log.Fatal(err)
+	
 		return errMsg
 	}
 	_, err = stmt.Exec(insertRow.VacName, insertRow.KeySkills, insertRow.VacDesc, insertRow.Salary, insertRow.JobCode)
 	if err != nil {
 		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
-		log.Fatal(err)
+	
 		return errMsg
 	}
 	stmt.Close()
@@ -99,16 +100,16 @@ func DeleteFunction (deleteTarget int32) string {
 		return "Ошибка подключения к базе данных"
 	}
 	defer db.Close()
-	stmt, err := db.Prepare("DELETE FROM products WHERE price = $1;")
+	stmt, err := db.Prepare("DELETE FROM vacancies WHERE ID = $1;")
 	if err != nil {
 		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
-		log.Fatal(err)
+		
 		return errMsg
 	}
 	_, err = stmt.Exec(deleteTarget)
 	if err != nil {
 		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
-		log.Fatal(err)
+		
 		return errMsg
 	}
 	stmt.Close()
