@@ -36,7 +36,7 @@ message InsertResponse {
 }
 
 message DeleteRequest {
-    string deleteTarget = 1;
+    int32 deleteTarget = 1;
 }
 
 message DeleteResponse {

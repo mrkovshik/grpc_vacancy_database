@@ -92,7 +92,7 @@ func InsertFunction (insertRow *proto.VacancyStruct) string {
 	return "Запись добавлена"
 }
 
-func DeleteFunction (deleteTarget string) string {
+func DeleteFunction (deleteTarget int32) string {
 	db,err:=connectDB()		
 	if err != nil {
 		log.Fatal(err)
