@@ -71,20 +71,48 @@ func ReadFunction (qry string) [] *proto.VacancyStruct {
 func InsertFunction (insertRow *proto.VacancyStruct) string {
 	db,err:=connectDB()		
 	if err != nil {
+		errMsg:=fmt.Sprintf("Ошибка подключения к базе данных: %v", err)
+		log.Fatal(err)
+		return errMsg
+	}
+		defer db.Close()
+	stmt, err := db.Prepare("INSERT INTO vacancies (vacancy_name,key_skills, vacancy_desc ,  salary, job_type) VALUES($1, $2,$3,$4,$5)")
+	if err != nil {
+		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
+		log.Fatal(err)
+		return errMsg
+	}
+	_, err = stmt.Exec(insertRow.VacName, insertRow.KeySkills, insertRow.VacDesc, insertRow.Salary, insertRow.JobCode)
+	if err != nil {
+		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
+		log.Fatal(err)
+		return errMsg
+	}
+	stmt.Close()
+	return "Запись добавлена"
+}
+
+func DeleteFunction (deleteTarget string) string {
+	db,err:=connectDB()		
+	if err != nil {
 		log.Fatal(err)
 		return "Ошибка подключения к базе данных"
 	}
 	defer db.Close()
-	stmt, err := db.Prepare("INSERT INTO vacancies (vacancy_name,key_skills, vacancy_desc ,  salary, job_type) VALUES($1, $2,$3,$4,$5)")
+	stmt, err := db.Prepare("DELETE FROM products WHERE price = $1;")
 	if err != nil {
+		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
 		log.Fatal(err)
-		return "Ошибка добавления значений в базу"
+		return errMsg
 	}
-	_, err = stmt.Exec(insertRow.VacName, insertRow.KeySkills, insertRow.VacDesc, insertRow.Salary, insertRow.JobCode)
+	_, err = stmt.Exec(deleteTarget)
 	if err != nil {
+		errMsg:=fmt.Sprintf("Ошибка добавления значений в базу: %v", err)
 		log.Fatal(err)
-		return "Ошибка добавления значений в базу"
-		}
+		return errMsg
+	}
 	stmt.Close()
-	return "Запись добавлена"
+	return "Запись удалена"
+	
+
 }
